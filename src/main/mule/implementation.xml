@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="getUser-implementationFlow" doc:id="0f20a40e-8e19-4a1a-9d7d-5d63bc832100" >
+		<ee:transform doc:name="Transform Message" doc:id="f2185782-24c3-4669-b48f-f7456e398965" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	firstName: "lakshman"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<mongo:find-documents doc:name="Find documents" doc:id="594fac87-a63b-4b15-bf01-820295734155" config-ref="MongoDB_Config" collectionName="#[vars.userData.CollectionName]" fields="firstName, lastName, City">
+			<mongo:query ><![CDATA[#[payload]]]></mongo:query>
+		</mongo:find-documents>
+		<ee:transform doc:name="Transform Message" doc:id="8143bc01-a91b-44c9-a43f-eb9e4c071651" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4f2a0792-837a-4c27-9d88-eae2d68a43c6" message='#[payload]'/>
+	</sub-flow>
+	<sub-flow name="createUser-implementationFlow" doc:id="91c2e601-e683-4dc4-898b-31d3e3e6f603" >
+		<mongo:collection-exists doc:name="Collection exists" doc:id="59106d2b-baca-4c79-9ef2-9edea8e1bf66" config-ref="MongoDB_Config" collectionName="#[vars.data.CollectionName]"/>
+		<choice doc:name="Choice" doc:id="22550f18-449f-4bf5-8eaf-f3e7a7936c65" >
+			<when expression="#[payload == false]">
+				<mongo:create-collection doc:name="Create collection" doc:id="ef376c3c-f7ca-43be-a19f-7651f145dc83" config-ref="MongoDB_Config" collectionName="#[vars.data.CollectionName]"/>
+				<mongo:insert-document collectionName="#[vars.data.CollectionName]" doc:name="Insert document" doc:id="1b8a1f8c-7de3-47e5-a62e-2a936c8a3201" config-ref="MongoDB_Config" >
+					<mongo:document ><![CDATA[#[vars.data.Employees]]]></mongo:document>
+				</mongo:insert-document>
+				<logger level="INFO" doc:name="Logger" doc:id="4f507bbd-1378-43e6-ba44-210982f3508c" message="#[payload]"/>
+			</when>
+			<otherwise >
+				<mongo:insert-document doc:name="Insert document" doc:id="c7beb273-3959-4036-8337-b093791f7f7b" config-ref="MongoDB_Config" collectionName="#[vars.data.CollectionName]">
+			<mongo:document><![CDATA[#[vars.data.Employees]]]></mongo:document>
+		</mongo:insert-document>
+				<logger level="INFO" doc:name="Logger" doc:id="2917cb2e-6369-4b29-893d-6028079ce9a6" message="#[payload]"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="createProduct-implementationFlow" doc:id="92f91c93-d0a7-478f-aeaa-592b2a06d4d6" >
+		<mongo:collection-exists collectionName="#[vars.data1.CollectionName1]" doc:name="Collection exists" doc:id="d86553cc-febb-40a4-958f-53c3e9897427" config-ref="MongoDB_Config"/>
+		<choice doc:name="Choice" doc:id="d1ee2001-e9a5-47df-9042-4aa78ba88c8e" >
+			<when expression="#[payload == false]">
+				<mongo:create-collection doc:name="Create collection" doc:id="784a7ab6-c31b-4529-837e-55efe56693cd" config-ref="MongoDB_Config" collectionName="#[vars.data1.CollectionName1]"/>
+				<mongo:insert-document doc:name="Insert document" doc:id="47ec3551-eb96-4d51-9abf-c99f118406b2" config-ref="MongoDB_Config" collectionName="#[vars.data1.CollectionName1]">
+					<mongo:document ><![CDATA[#[vars.data1.Employees1]]]></mongo:document>
+				</mongo:insert-document>
+				<logger level="INFO" doc:name="Logger" doc:id="5f6c8179-4167-4076-ba52-6673cadf16d0" message="#[payload]"/>
+			</when>
+			<otherwise >
+				<mongo:insert-document collectionName="#[vars.data1.CollectionName1]" doc:name="Insert document" doc:id="653e41a9-5ad7-4a39-aeb0-f80ec06ed82a" config-ref="MongoDB_Config">
+					<mongo:document><![CDATA[#[vars.data1.Employees1]]]></mongo:document>
+				</mongo:insert-document>
+				<logger level="INFO" doc:name="Logger" doc:id="6095223a-3a2f-4000-be6f-a245082c083b" message="#[payload]"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+</mule>

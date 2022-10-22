@@ -1,0 +1,11 @@
+{
+  "Employees":
+               {
+                "firstName": "lakshman",
+                "lastName": "Thandra",
+                "Address": "Kommadi",
+                "City": "Vizag",
+                "Phone": "+91 9456211568"
+                },
+  "CollectionName": "lucky"
+  }

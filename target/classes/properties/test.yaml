@@ -1,0 +1,14 @@
+http:
+  host: "localhost"
+  port: "8082"
+  path: "/api/*"
+  
+  
+  
+  
+#### MongoDB Configuration Properties #######
+
+mongoDB:
+  host: "150.129.107.6"
+  port: "27017"
+  Database: "newDoc"

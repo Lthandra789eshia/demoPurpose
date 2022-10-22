@@ -1,0 +1,55 @@
+#%RAML 1.0
+title: banking
+version: v1
+description: Banking domain 
+protocols: [HTTP, HTTPS]
+mediaType: application/json
+
+
+
+traits:
+  client_id_req: !include examples/client_cred.raml
+  userCred: !include examples/userCred.raml
+securitySchemes:
+  okta: !include examples/securityScheme.raml
+types:
+  credUserDT: !include examples/dataType.raml
+/product:
+  post:
+    is: [client_id_req, userCred]
+    body:
+      application/json:
+        example: !include examples/createUser.json
+    responses:
+      200:
+        body:
+          example: {
+            "message": "going good",
+            "status": 201
+          }
+
+/User:
+  post:
+    securedBy: [okta]
+    is: [client_id_req, userCred]
+    body:
+      example: !include examples/createUser.json
+      type: credUserDT
+    responses:
+      201:
+        body:
+          example: !include examples/createdUser.json
+  get:
+    is: [client_id_req, userCred]
+    responses:
+      200:
+        body:
+          example: !include examples/createUser.json
+   
+        
+      
+  
+
+          
+  
+    

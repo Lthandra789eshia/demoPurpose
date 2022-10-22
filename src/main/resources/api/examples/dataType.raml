@@ -1,0 +1,23 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  CollectionName:
+    type: string
+    required: true
+  Employees:
+    type: object
+    properties:
+      firstName:
+        type: string
+        required: true
+      lastName: 
+        type: string
+        required: true
+      Address:
+        type: string
+        required: true
+      City?:
+        type: string
+      Phone?:
+        type: string
+
